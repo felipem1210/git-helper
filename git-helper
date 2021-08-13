@@ -1,0 +1,177 @@
+#!/bin/bash
+
+set -e
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+Get_Data() {
+  printf "Making request to Gitlab API \n"
+  CURL_RESULT=$(curl -s --header "PRIVATE-TOKEN: ${PRIVATE_TOKEN}" "https://${GIT_URL}/api/v4/groups/${GROUP_ID}/projects" |  jq -j '.[]| .id, ";", .name, ";", .ssh_url_to_repo, "\n"' | tr -d '"')
+  CURL_RESULT_ARRAY=($CURL_RESULT)
+  for element in "${CURL_RESULT_ARRAY[@]}"
+  do
+    ID+=($(echo ${element}|awk -F ";" '{print $1}'))
+    NAME+=($(echo ${element}|awk -F ";" '{print $2}'))
+    URL+=($(echo ${element}|awk -F ";" '{print $3}'))
+  done  
+}
+
+Clone(){
+  echo "Cloning repositories"
+  for element in "${!ID[@]}"
+  do
+    if [ ! -d ${NAME[$element]} ]; then
+      printf "${GREEN}Cloning ${NAME[$element]} repository ${NC}\n"
+      git clone ${URL[$element]}
+    else
+      printf "${GREEN}Repository ${NAME[$element]} already cloned ${NC}\n"
+    fi
+  done
+}
+
+Project_ID(){
+  for element in "${!ID[@]}"
+  do
+    if [ -d ${NAME[$element]} ]; then
+      printf "${GREEN}Adding project ID in ${NAME[$element]} repository ${NC}\n"
+      cd ${NAME[$element]}
+      echo ${ID[$element]} > .project_id.tmp
+      cd ..
+    else
+      printf "${RED}${NAME[$element]} repository not found ${NC}\n"
+    fi
+  done
+}
+
+List_Projects() {
+  if [ ! -z ${WORKING_DIR} ]; then
+    echo "Listing repositories in current folder"
+    cd ${WORKING_DIR}
+    LIST=$(ls -d */)
+    DIRECTORIES=($LIST)
+  else
+    printf "${RED} WORKING_DIR envar is missing ${NC}\n"; exit 1
+  fi
+}
+
+Add() {
+  echo "Adding changes in all repositories"
+  for element in "${DIRECTORIES[@]}"; do
+      printf "${GREEN}Adding changes in ${element} repository ${NC}\n"
+      cd ${element}
+      git add -A
+      cd ..
+  done
+}
+
+Commit() {
+  for element in "${DIRECTORIES[@]}"; do
+      printf "${GREEN}Adding commit in ${element} repository ${NC}\n"
+      cd ${element}
+      git diff-index --quiet HEAD || git commit -m "${MESSAGE}"
+      cd ..
+  done
+}
+
+Reset() {
+  for element in "${DIRECTORIES[@]}"; do
+      printf "${GREEN}Resetting to HEAD the actual branch in ${element} repository ${NC}\n"
+      cd ${element}
+      git reset --hard HEAD
+      cd ..
+  done
+}
+
+Rebase() {
+  for element in "${DIRECTORIES[@]}"; do
+      printf "${GREEN}Rebasing the actual branch in ${element} repository with ${BASE_BRANCH} ${NC}\n"
+      cd ${element}
+      if [ ! -z ${BASE_BRANCH} ]; then
+        git rebase ${EXTRA_OPTIONS} ${BASE_BRANCH} || true
+        cd ..
+      else
+        git rebase ${EXTRA_OPTIONS} || true
+        cd ..
+      fi
+  done
+}
+
+Branch() {
+  if [ $ACTION == "create-branch" ]; then COMMAND="git checkout -b"; fi
+  if [ $ACTION == "checkout" ]; then COMMAND="git checkout"; fi
+  if [ $ACTION == "pull" ]; then COMMAND="git pull origin"; fi
+  if [ $ACTION == "push" ]; then COMMAND="git push ${EXTRA_OPTIONS} origin"; fi
+  if [ $ACTION == "delete" ]; then COMMAND="git branch -D"; fi
+  if [ $ACTION == "branch" ]; then COMMAND="git branch ${EXTRA_OPTIONS}"; fi
+  for element in "${DIRECTORIES[@]}"; do
+    cd ${element}
+    if [ -z $BRANCH_NAME ]; then
+      BRANCH_NAME=$(git branch --show-current)
+    fi
+    printf "${GREEN}${ACTION} branch ${BRANCH_NAME} in ${element} repository ${NC}\n"
+    ${COMMAND} ${BRANCH_NAME}
+    cd ..
+  done  
+}
+
+for i in "$@"; do
+  if [[ $i == *"--message"* ]]; then MESSAGE="${i#*=}"; 
+  elif [[ $i == *"--private-token"* ]]; then PRIVATE_TOKEN="${i#*=}"; 
+  elif [[ $i == *"--git-domain"* ]]; then GIT_URL="${i#*=}"; 
+  elif [[ $i == *"--group-id"* ]]; then GROUP_ID="${i#*=}"; 
+  elif [[ $i == *"--branch"* ]]; then BRANCH_NAME="${i#*=}"; 
+  elif [[ $i == *"--base-branch"* ]]; then BASE_BRANCH="${i#*=}"; 
+  elif [[ $i == *"--extra-options"* ]]; then EXTRA_OPTIONS="${i#*=}"; 
+  elif [[ $i == *"--action"* ]] || [[ $i == *"--help"* ]]; then true;
+  else
+    echo "One or more options are invalid, check help --help option"
+    exit 1
+  fi
+done
+for i in "$@"; do
+  case $i in
+    --action=*)
+      ACTION="${i#*=}"
+      if [ $ACTION == "clone" ]; then
+        Get_Data
+        Clone
+        Project_ID
+      elif [ $ACTION == "add" ]; then
+        List_Projects
+        Add
+      elif [ $ACTION == "commit" ]; then
+        List_Projects
+        Commit  
+      elif [ $ACTION == "create-branch" ] || [ $ACTION == "checkout" ] || [ $ACTION == "pull" ] || [ $ACTION == "push" ] || [ $ACTION == "delete" ] || [ $ACTION == "branch" ]; then
+        List_Projects
+        Branch
+      elif [ $ACTION == "get-projects-id" ]; then
+        Get_Data   
+        Project_ID
+      elif [ $ACTION == "rebase" ]; then
+        List_Projects
+        Rebase
+      elif [ $ACTION == "reset" ]; then
+        List_Projects
+        Reset                   
+      else
+        printf "${RED} Incorrect argument for action option, exiting${NC}\n" 
+        exit 1
+      fi
+      shift
+    ;;      
+    --help|-h)
+      printf "
+##########################################        
+#              Git helper                #
+##########################################
+
+A script for automating GIT work in multiple repositories, see README.md to know how to use this.
+\n"
+      shift
+      exit 0
+    ;;
+  esac
+done
