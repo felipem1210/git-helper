@@ -43,9 +43,11 @@ Basically with this script you can run the git commands alongside multiple repos
 
 * Used in clone action:
 
-  * `--private-token` -- Is Your [Gitlab private token]
-  * `--git-domain` -- The domain of the gitlab server
-  * `--group-id` -- The ID of the Group of repositories you want to clone
+  * `--private-token` -- Is Your [Gitlab/GitHub private token]
+  * `--git-provider` -- `gitlab` or `github`
+  * `--git-domain` -- The domain of the gitlab server (Gitlab)
+  * `--group-id` -- The ID of the Group of repositories you want to clone (Gitlab)
+  * `--org-name` -- The name of the GitHub organization
 
 * `--message` -- Message for a commit 
 * `--branch` -- The branch where you want to work 
@@ -57,9 +59,14 @@ Basically with this script you can run the git commands alongside multiple repos
 
 ### Examples for using differents actions:
 
-* Git Clone repositories of group - **just supported for Gitlab**:
+* Git Clone repositories of group - **Gitlab**:
 ```shell
-  git-helper --action=clone --private-token"YOUR_GITLAB_TOKEN" --git-domain="YOUR_GITLAB_DOMAIN" --group-id="YOUR_GROUP_ID"  
+  git-helper --action=clone --git-provider=gitlab --private-token="YOUR_GITLAB_TOKEN" --git-domain="YOUR_GITLAB_DOMAIN" --group-id="YOUR_GROUP_ID"  
+```
+
+* Git Clone repositories of organization - **Github**:
+```shell
+  git-helper --action=clone --git-provider=github --private-token="YOUR_GITHUB_TOKEN"  --org-name="YOUR_ORG_NAME"
 ```
 
 * Create a commit:
