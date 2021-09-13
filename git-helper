@@ -8,7 +8,13 @@ NC='\033[0m' # No Color
 
 Get_Data() {
   printf "Making request to Gitlab API \n"
-  CURL_RESULT=$(curl -s --header "PRIVATE-TOKEN: ${PRIVATE_TOKEN}" "https://${GIT_URL}/api/v4/groups/${GROUP_ID}/projects" |  jq -j '.[]| .id, ";", .name, ";", .ssh_url_to_repo, "\n"' | tr -d '"')
+  
+  if [ ${PROVIDER} == "gitlab" ]; then
+    CURL_RESULT=$(curl -s --header "PRIVATE-TOKEN: ${PRIVATE_TOKEN}" "https://${GIT_URL}/api/v4/groups/${GROUP_ID}/projects" |  jq -j '.[]| .id, ";", .name, ";", .ssh_url_to_repo, "\n"' | tr -d '"')
+  elif [ ${PROVIDER} == "github" ]; then
+    CURL_RESULT=$(curl -s -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${PRIVATE_TOKEN}" https://api.github.com/orgs/${ORG_NAME}/repos |  jq -j '.[]| .id, ";", .name, ";", .ssh_url, "\n"' | tr -d '"')
+  fi
+
   CURL_RESULT_ARRAY=($CURL_RESULT)
   for element in "${CURL_RESULT_ARRAY[@]}"
   do
@@ -124,6 +130,8 @@ for i in "$@"; do
   elif [[ $i == *"--branch"* ]]; then BRANCH_NAME="${i#*=}"; 
   elif [[ $i == *"--base-branch"* ]]; then BASE_BRANCH="${i#*=}"; 
   elif [[ $i == *"--extra-options"* ]]; then EXTRA_OPTIONS="${i#*=}"; 
+  elif [[ $i == *"--git-provider"* ]]; then PROVIDER="${i#*=}";
+  elif [[ $i == *"--org-name"* ]]; then ORG_NAME="${i#*=}";
   elif [[ $i == *"--action"* ]] || [[ $i == *"--help"* ]]; then true;
   else
     echo "One or more options are invalid, check help --help option"
