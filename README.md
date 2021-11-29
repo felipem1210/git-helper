@@ -9,12 +9,13 @@ This script may be your solution to help you save time.
 
 * Bash
 * [Jq](https://stedolan.github.io/jq/download/)
+* Git (obviously)
 
 ## Git commands supported
 
 Basically with this script you can run the git commands alongside multiple repositories that are inside an specific folder:
 
-* clone (Repos grouped in a group). **There is only support for GitLab**
+* clone (Repos grouped in a Gitlab Group or Github Org).
 * checkout
 * add all new content
 * create new branch locally
