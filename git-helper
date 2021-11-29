@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+#set -e
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -55,7 +55,7 @@ List_Projects() {
   if [ ! -z ${WORKING_DIR} ]; then
     echo "Listing repositories in current folder"
     cd ${WORKING_DIR}
-    LIST=$(ls -d */)
+    LIST=$(for dir in $(ls -d */); do if git -C $dir rev-parse 2>/dev/null; then echo $dir; fi; done)
     DIRECTORIES=($LIST)
   else
     printf "${RED} WORKING_DIR envar is missing ${NC}\n"; exit 1
@@ -145,7 +145,7 @@ for i in "$@"; do
       if [ $ACTION == "clone" ]; then
         Get_Data
         Clone
-        Project_ID
+        #Project_ID
       elif [ $ACTION == "add" ]; then
         List_Projects
         Add
@@ -157,7 +157,7 @@ for i in "$@"; do
         Branch
       elif [ $ACTION == "get-projects-id" ]; then
         Get_Data   
-        Project_ID
+        #Project_ID
       elif [ $ACTION == "rebase" ]; then
         List_Projects
         Rebase
