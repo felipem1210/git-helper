@@ -4,6 +4,7 @@ set -e
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
 Get_Data() {
@@ -117,7 +118,11 @@ Branch() {
       BRANCH_NAME=$(git branch --show-current)
     fi
     printf "${GREEN}${ACTION} branch ${BRANCH_NAME} in ${element} repository ${NC}\n"
-    ${COMMAND} ${BRANCH_NAME}
+    if git rev-parse --verify --quiet $BRANCH_NAME > /dev/null; then
+      ${COMMAND} ${BRANCH_NAME}
+    else 
+      echo "${YELLOW} The branch ${BRANCH_NAME} does not exist ${NC}"
+    fi
     cd ..
   done  
 }
