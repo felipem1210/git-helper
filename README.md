@@ -25,6 +25,7 @@ Basically with this script you can run the git commands alongside multiple repos
 * delete branch locally
 * rebase
 * push
+* fetch
 
 ## Using the script.
 
@@ -115,3 +116,7 @@ Basically with this script you can run the git commands alongside multiple repos
   git-helper --action=push 
 ```
 
+* Fetch all branches from upstream:
+```shell
+  git-helper --action=fetch
+```

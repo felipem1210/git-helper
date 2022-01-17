@@ -73,6 +73,15 @@ Add() {
   done
 }
 
+Fetch() {
+  for element in "${DIRECTORIES[@]}"; do
+      printf "${GREEN}Doing fetch in ${element} repository ${NC}\n"
+      cd ${element}
+      git fetch ${EXTRA_OPTIONS}
+      cd ..
+  done
+}
+
 Commit() {
   for element in "${DIRECTORIES[@]}"; do
       printf "${GREEN}Adding commit in ${element} repository ${NC}\n"
@@ -118,10 +127,10 @@ Branch() {
       BRANCH_NAME=$(git branch --show-current)
     fi
     printf "${GREEN}${ACTION} branch ${BRANCH_NAME} in ${element} repository ${NC}\n"
-    if git rev-parse --verify --quiet $BRANCH_NAME > /dev/null; then
+    if git rev-parse --verify --quiet ${BRANCH_NAME} > /dev/null; then
       ${COMMAND} ${BRANCH_NAME}
     else 
-      echo "${YELLOW} The branch ${BRANCH_NAME} does not exist ${NC}"
+      printf "${YELLOW} The branch ${BRANCH_NAME} does not exist ${NC}\n"
     fi
     cd ..
   done  
@@ -156,7 +165,10 @@ for i in "$@"; do
         Add
       elif [ $ACTION == "commit" ]; then
         List_Projects
-        Commit  
+        Commit 
+      elif [ $ACTION == "fetch" ]; then
+        List_Projects
+        Fetch          
       elif [ $ACTION == "create-branch" ] || [ $ACTION == "checkout" ] || [ $ACTION == "pull" ] || [ $ACTION == "push" ] || [ $ACTION == "delete" ] || [ $ACTION == "branch" ]; then
         List_Projects
         Branch
