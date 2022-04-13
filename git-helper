@@ -114,8 +114,15 @@ Rebase() {
   done
 }
 
+CreateBranch() {
+  for element in "${DIRECTORIES[@]}"; do
+    printf "${GREEN}Creating branch ${BRANCH_NAME} in ${element} repository${NC}\n"
+    cd ${element}
+    git checkout -b ${EXTRA_OPTIONS} ${BRANCH_NAME} || true
+  done
+}
+
 Branch() {
-  if [ $ACTION == "create-branch" ]; then COMMAND="git checkout -b"; fi
   if [ $ACTION == "checkout" ]; then COMMAND="git checkout"; fi
   if [ $ACTION == "pull" ]; then COMMAND="git pull origin"; fi
   if [ $ACTION == "push" ]; then COMMAND="git push ${EXTRA_OPTIONS} origin"; fi
@@ -169,9 +176,12 @@ for i in "$@"; do
       elif [ $ACTION == "fetch" ]; then
         List_Projects
         Fetch          
-      elif [ $ACTION == "create-branch" ] || [ $ACTION == "checkout" ] || [ $ACTION == "pull" ] || [ $ACTION == "push" ] || [ $ACTION == "delete" ] || [ $ACTION == "branch" ]; then
+      elif [ $ACTION == "checkout" ] || [ $ACTION == "pull" ] || [ $ACTION == "push" ] || [ $ACTION == "delete" ] || [ $ACTION == "branch" ]; then
         List_Projects
         Branch
+      elif [ $ACTION == "create-branch" ]; then
+        List_Projects
+        CreateBranch
       elif [ $ACTION == "get-projects-id" ]; then
         Get_Data   
         #Project_ID
