@@ -118,7 +118,8 @@ CreateBranch() {
   for element in "${DIRECTORIES[@]}"; do
     printf "${GREEN}Creating branch ${BRANCH_NAME} in ${element} repository${NC}\n"
     cd ${element}
-    git checkout -b ${EXTRA_OPTIONS} ${BRANCH_NAME} || true
+    git checkout -b ${EXTRA_OPTIONS} ${BRANCH_NAME} ||true
+    cd ..
   done
 }
 
