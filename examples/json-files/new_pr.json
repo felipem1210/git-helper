@@ -1,0 +1,7 @@
+{
+    "title": "my-cool-pr",
+    "head": "feat/my-branch",
+    "base": "main",
+    "body": "this is my awesome pr",
+    "maintainer_can_modify": true
+} 

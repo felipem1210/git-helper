@@ -1,19 +1,18 @@
 # GitHelper
-A script for automating GIT work in multiple repositories
+A golang cli tool for automating GIT work in multiple repositories
 
 Are you tired of typing the same git commands on multiple repositories of your project?
+Are you tired of opening and updating Pull Requests for each repository?
 
-This script may be your solution to help you save time.
+This cli may be your solution to help you save time.
 
-## Prerequisites
+## Installation
 
-* Bash
-* [Jq](https://stedolan.github.io/jq/download/)
-* Git (obviously)
 
-## Git commands supported
 
-Basically with this script you can run the git commands alongside multiple repositories that are inside an specific folder:
+## Git integration
+
+You can run local git commands alongside multiple repositories that are inside an specific folder:
 
 * clone (Repos grouped in a Gitlab Group or Github Org).
 * checkout
@@ -22,10 +21,13 @@ Basically with this script you can run the git commands alongside multiple repos
 * pull
 * commit
 * reset to HEAD
-* delete branch locally
 * rebase
 * push
 * fetch
+
+## Github integration
+
+
 
 ## Using the script.
 
