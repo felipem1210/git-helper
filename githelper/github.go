@@ -26,35 +26,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type jsonStructs interface {
-	//githubWriteRepoInfo(myRepoInfo, []*github.Repository, string) error
-	//githubWritePrInfo(string, *github.PullRequest, string) error
-	GetGithubRepositoriesInfo(org string, f string) MyRepos
-	GithubCreatePr(org string, r []string, f string) MyPrs
-}
-
-type myReposJson struct {
-	Name     string `json:"name"`
-	CloneURL string `json:"clone_url"`
-}
-
 type MyRepos []*github.Repository
-
-type prCreateInfo github.NewPullRequest
-
-type MyPrs []*github.PullRequest
-
-type MyPrsJson []prInfo
-type prInfo struct {
-	Name     string `json:"name"`
-	Title    string `json:"title,omitempty"`
-	PrNumber int    `json:"pr_number,omitempty"`
-	Body     string `json:"body,omitempty"`
-	State    string `json:"state,omitempty"`
-	Base     string `json:"base,omitempty"`
-	Head     string `json:"head,omitempty"`
-	Url      string `json:"url,omitempty"`
-}
 
 // Authenticate with Github
 func githubInitClient() (*github.Client, context.Context) {
@@ -108,10 +80,49 @@ func (myRepos MyRepos) GetGithubRepositoriesInfo(org string) MyRepos {
 	return myReposComplete
 }
 
-func (myPrs MyPrs) GithubCreatePr(org string, repos []string, f string, reviewers []string) MyPrsJson {
+func (myRepos MyRepos) GithubGetOrg(f string) string {
+	var org string
+	myRepos = myRepos.fromJsontoSliceOfStructs(f)
+	for _, repo := range myRepos {
+		org = repo.GetOrganization().GetLogin()
+	}
+	return org
+}
+
+func (myRepos MyRepos) GithubGetRepoNames(f string) []string {
+	myRepos = myRepos.fromJsontoSliceOfStructs(f)
+	var repoNames []string
+	for _, repo := range myRepos {
+		repoNames = append(repoNames, repo.GetName())
+	}
+	return repoNames
+}
+
+func (myRepos MyRepos) GithubGetCloneUrls(f string) []string {
+	myRepos = myRepos.fromJsontoSliceOfStructs(f)
+	var repoUrls []string
+	for _, repo := range myRepos {
+		repoUrls = append(repoUrls, repo.GetCloneURL())
+	}
+	return repoUrls
+}
+
+type prCreateInfo github.NewPullRequest
+type MyPrs []prInfo
+type prInfo struct {
+	Name     string `json:"name"`
+	Title    string `json:"title,omitempty"`
+	PrNumber int    `json:"pr_number,omitempty"`
+	Body     string `json:"body,omitempty"`
+	State    string `json:"state,omitempty"`
+	Base     string `json:"base,omitempty"`
+	Head     string `json:"head,omitempty"`
+	Url      string `json:"url,omitempty"`
+}
+
+func (myPrs MyPrs) GithubCreatePr(org string, repos []string, f string, reviewers []string) MyPrs {
 	prCreateInfoPointer := &prCreateInfo{}
 	data := prCreateInfoPointer.fromJsontoStruct(f)
-	myPrJson := MyPrsJson{}
 	client, ctx := githubInitClient()
 	pr_options := &github.NewPullRequest{
 		Title:               data.Title,
@@ -129,7 +140,7 @@ func (myPrs MyPrs) GithubCreatePr(org string, repos []string, f string, reviewer
 		}
 		fmt.Printf("PR created for repo: %s\n Url: %s\n", repo, pr_info.GetHTMLURL())
 		my_pr_info := githubWritePrInfo(repo, pr_info)
-		myPrJson = append(myPrJson, my_pr_info)
+		myPrs = append(myPrs, my_pr_info)
 		if len(reviewers) != 0 {
 			reviewers := &github.ReviewersRequest{
 				Reviewers: reviewers,
@@ -140,10 +151,10 @@ func (myPrs MyPrs) GithubCreatePr(org string, repos []string, f string, reviewer
 			}
 		}
 	}
-	return myPrJson
+	return myPrs
 }
 
-func (myPrs MyPrsJson) GithubEditPr(org string, repos []string, f string) {
+func (myPrs MyPrs) GithubEditPr(org string, repos []string, f string) {
 	myPrs = myPrs.fromJsontoSliceOfStructs(f)
 	client, ctx := githubInitClient()
 	for i, pr := range myPrs {
@@ -165,7 +176,7 @@ func (myPrs MyPrsJson) GithubEditPr(org string, repos []string, f string) {
 	}
 }
 
-func (myPrs MyPrsJson) GithubMergePr(org string, repos []string, f string) {
+func (myPrs MyPrs) GithubMergePr(org string, repos []string, f string) {
 	myPrs = myPrs.fromJsontoSliceOfStructs(f)
 	client, ctx := githubInitClient()
 	for i, pr := range myPrs {

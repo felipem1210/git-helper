@@ -31,28 +31,28 @@ var prCmd = &cobra.Command{
 		repos_json_file, _ := cmd.Flags().GetString("repo-info-json-file")
 		new_pr_json_file, _ := cmd.Flags().GetString("new-pr-json-file")
 		pr_info_json_file, _ := cmd.Flags().GetString("pr-info-json-file")
-		org, _ := cmd.Flags().GetString("org")
 		reviewers, _ := cmd.Flags().GetStringSlice("reviewers")
 		create, _ := cmd.Flags().GetBool("create")
 		update, _ := cmd.Flags().GetBool("update")
 		merge, _ := cmd.Flags().GetBool("merge")
 
-		repoNames := githelper.GetFromJsonReturnArray(repos_json_file, "Name")
+		repos := githelper.MyRepos{}
+		repoNames := repos.GithubGetRepoNames(repos_json_file)
+		org := repos.GithubGetOrg(repos_json_file)
 
 		myPrs := githelper.MyPrs{}
-		myPrsJson := githelper.MyPrsJson{}
 		if create {
-			myPrsJson = myPrs.GithubCreatePr(org, repoNames, new_pr_json_file, reviewers)
-			err := githelper.WritePrsToJson(myPrsJson, pr_info_json_file)
+			myPrs = myPrs.GithubCreatePr(org, repoNames, new_pr_json_file, reviewers)
+			err := githelper.WritePrsToJson(myPrs, pr_info_json_file)
 			if err != nil {
 				githelper.CheckIfError(err)
 			} else {
 				color.Green("The json file %s with pr info was written sucessfully", pr_info_json_file)
 			}
 		} else if update {
-			myPrsJson.GithubEditPr(org, repoNames, pr_info_json_file)
+			myPrs.GithubEditPr(org, repoNames, pr_info_json_file)
 		} else if merge {
-			myPrsJson.GithubMergePr(org, repoNames, pr_info_json_file)
+			myPrs.GithubMergePr(org, repoNames, pr_info_json_file)
 		}
 	},
 }
@@ -66,7 +66,4 @@ func init() {
 	prCmd.PersistentFlags().BoolP("update", "u", false, "The json file with info of the PRs created.")
 	prCmd.PersistentFlags().BoolP("merge", "m", false, "The json file with info of the PRs created.")
 	prCmd.Flags().StringSliceVarP(&reviewers, "reviewers", "r", []string{}, "List of usernames of reviewers for the pull request")
-	prCmd.PersistentFlags().StringP("org", "o", "", "The github Organization to work with")
-	prCmd.MarkPersistentFlagRequired("org")
-
 }

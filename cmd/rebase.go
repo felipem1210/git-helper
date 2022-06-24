@@ -33,7 +33,8 @@ If you have conflicts you can pass the argument with "continue" or "abort" optio
 		fmt.Println("rebase called")
 		base_branch, _ := cmd.Flags().GetString("base-branch")
 		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		repoNames := githelper.GetFromJsonReturnArray(json_file, "Name")
+		myRepos := githelper.MyRepos{}
+		repoNames := myRepos.GithubGetRepoNames(json_file)
 		githelper.GitRebase(repoNames, base_branch)
 	},
 }

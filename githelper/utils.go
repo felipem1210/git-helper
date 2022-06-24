@@ -22,10 +22,9 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"reflect"
 )
 
-func WritePrsToJson(data MyPrsJson, json_file string) error {
+func WritePrsToJson(data MyPrs, json_file string) error {
 	file, _ := json.MarshalIndent(data, "", "  ")
 	err := ioutil.WriteFile(getEnvValue("WORKDING_DIR")+json_file, file, 0644)
 	return err
@@ -37,23 +36,6 @@ func WriteReposToJson(data MyRepos, json_file string) error {
 	return err
 }
 
-func GetFromJsonReturnArray(f string, d string) []string {
-	// Open our jsonFile
-	jsonFile, err := ioutil.ReadFile(f)
-	// if we os.Open returns an error then handle it
-	CheckIfError(err)
-	var m []myReposJson
-	var data []string
-	err = json.Unmarshal([]byte(jsonFile), &m)
-	CheckIfError(err)
-	for _, val := range m {
-		r := reflect.ValueOf(val)
-		f := reflect.Indirect(r).FieldByName(d)
-		data = append(data, f.String())
-	}
-	return data
-}
-
 func (data *prCreateInfo) fromJsontoStruct(f string) *prCreateInfo {
 	jsonFile, err := ioutil.ReadFile(f)
 	CheckIfError(err)
@@ -62,7 +44,7 @@ func (data *prCreateInfo) fromJsontoStruct(f string) *prCreateInfo {
 	return data
 }
 
-func (data MyPrsJson) fromJsontoSliceOfStructs(f string) MyPrsJson {
+func (data MyPrs) fromJsontoSliceOfStructs(f string) MyPrs {
 	jsonFile, err := ioutil.ReadFile(f)
 	CheckIfError(err)
 	err = json.Unmarshal([]byte(jsonFile), &data)

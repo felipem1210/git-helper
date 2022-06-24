@@ -29,7 +29,8 @@ var commitCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		message, _ := cmd.Flags().GetString("message")
 		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		repoNames := githelper.GetFromJsonReturnArray(json_file, "Name")
+		myRepos := githelper.MyRepos{}
+		repoNames := myRepos.GithubGetRepoNames(json_file)
 		githelper.GitCommit(repoNames, message)
 	},
 }
