@@ -1,0 +1,32 @@
+[
+  {
+    "name": "testing1",
+    "default_branch": "master",
+    "master_branch": "master",
+    "organization": {
+      "name": "MyOrg"
+    },
+    "allow_rebase_merge": false,
+    "allow_squash_merge": false,
+    "allow_merge_commit": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": true,
+    "private": true,
+    "auto_init": true
+  },
+  {
+    "name": "testing2",
+    "default_branch": "master",
+    "master_branch": "master",
+    "organization": {
+      "name": "FelipeMaciasOrg"
+    },
+    "allow_rebase_merge": false,
+    "allow_squash_merge": false,
+    "allow_merge_commit": true,
+    "allow_auto_merge": false,
+    "delete_branch_on_merge": true,
+    "private": true,
+    "auto_init": true
+  }
+]
