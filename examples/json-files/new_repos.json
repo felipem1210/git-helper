@@ -1,8 +1,8 @@
 [
   {
     "name": "testing1",
-    "default_branch": "master",
-    "master_branch": "master",
+    "default_branch": "main",
+    "master_branch": "main",
     "organization": {
       "name": "MyOrg"
     },

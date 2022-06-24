@@ -28,7 +28,8 @@ var resetCmd = &cobra.Command{
 	Long:  `Hard Reset to HEAD in all repositories.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		repoNames := githelper.GetFromJsonReturnArray(json_file, "Name")
+		myRepos := githelper.MyRepos{}
+		repoNames := myRepos.GithubGetRepoNames(json_file)
 		githelper.GitReset(repoNames)
 	},
 }

@@ -38,6 +38,8 @@ var cloneCmd = &cobra.Command{
 		org, _ := cmd.Flags().GetString("org")
 		if provider == "github" && json_file != "" {
 			myRepos := githelper.MyRepos{}
+			repoNames = myRepos.GithubGetRepoNames(json_file)
+			repoUrls = myRepos.GithubGetCloneUrls(json_file)
 			if _, err := os.Stat(json_file); errors.Is(err, os.ErrNotExist) {
 				myRepos = myRepos.GetGithubRepositoriesInfo(org)
 				err := githelper.WriteReposToJson(myRepos, json_file)
@@ -47,10 +49,7 @@ var cloneCmd = &cobra.Command{
 					color.Green("The json file %s with repo info was written sucessfully", json_file)
 				}
 			}
-			repoNames = githelper.GetFromJsonReturnArray(json_file, "Name")
-			repoUrls = githelper.GetFromJsonReturnArray(json_file, "CloneURL")
 		}
-
 		githelper.GitClone(repoNames, repoUrls)
 	},
 }

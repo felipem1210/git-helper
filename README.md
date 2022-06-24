@@ -13,7 +13,7 @@ Change the version for the [version](https://github.com/felipem1210/git-helper/t
 ### Linux amd64
 
 ```sh
-export GITHELPER_VERSION=0.1.0
+export GITHELPER_VERSION=0.1.1
 curl -L "https://github.com/felipem1210/git-helper/releases/download/v${GITHELPER_VERSION}/git-helper_${GITHELPER_VERSION}_linux_amd64.tar.gz" |tar xzv -C /tmp
 sudo mv /tmp/git-helper /usr/local/bin/git-helper
 ```
@@ -26,13 +26,13 @@ sudo mv /tmp/git-helper /usr/local/bin/git-helper
 export WORKING_DIR=$(pwd)
 ```
 
-Define `GIT_ACCESS_USER` and `GIT_ACCESS_TOKEN` with your Github Username and Token
+* Define `GIT_ACCESS_USER` and `GIT_ACCESS_TOKEN` with your Github Username and Token
 
 ## Git integration
 
-You can run local git commands alongside multiple repositories that are inside an specific folder:
+You can run local git commands alongside multiple repositories that are inside the `$WORKING_DIR`:
 
-* clone (Repos grouped in a Gitlab Group or Github Org).
+* clone (Repos grouped in a Github Org).
 * checkout
 * add all new content
 * create new branch locally
@@ -42,6 +42,7 @@ You can run local git commands alongside multiple repositories that are inside a
 * rebase
 * push
 * fetch
+* status
 
 ## Github integration
 
