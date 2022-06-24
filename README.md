@@ -8,7 +8,7 @@ This cli may be your solution to help you save time.
 
 ## Installation
 
-Change the version for the [https://github.com/felipem1210/git-helper/tags](version) you want (withouth initial v)
+Change the version for the [version](https://github.com/felipem1210/git-helper/tags) you want (withouth initial v)
 
 ### Linux amd64
 
@@ -48,7 +48,7 @@ You can run following actions in github:
 
 * Create repositories. 
 
-You need to provide a json file with info of the repos you want to create. Check [examples/json-files/new_repos.json](this json file) with the example of the file. Place the file in your $WORKING_DIR
+You need to provide a json file with info of the repos you want to create. Check [this json file](examples/json-files/new_repos.json) with the example of the file. Place the file in your $WORKING_DIR
 
 ```sh
 cp examples/json-files/new_repos.json $WORKING_DIR
@@ -58,7 +58,7 @@ After creating the repositories a file `repos_info.json` will be created. don't 
 
 * Create/update/merge pull requests
 
-You need to provide a json file with info of the PRs you want to create. Check [examples/json-files/new_prs.json](this json file) with the example of the file. Place the file in your $WORKING_DIR
+You need to provide a json file with info of the PRs you want to create. Check [this json file](examples/json-files/new_prs.json) with the example of the file. Place the file in your $WORKING_DIR
 
 ```sh
 cp examples/json-files/new_prs.json $WORKING_DIR
