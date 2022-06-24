@@ -8,7 +8,24 @@ This cli may be your solution to help you save time.
 
 ## Installation
 
+Change the version for the [https://github.com/felipem1210/git-helper/tags](version) you want (withouth initial v)
 
+### Linux amd64
+
+```sh
+curl -L https://github.com/felipem1210/git-helper/releases/download/v1.0.0-rc1/git-helper_1.0.0_linux_amd64.tar.gz |tar xzv -C /tmp
+sudo mv /tmp/git-helper /usr/local/bin/git-helper
+```
+
+### Envars needed
+
+* Define the envar WORKING_DIR. This must be the folder where you have all the repositories you want to manage.
+
+```sh
+export WORKING_DIR=$(pwd)
+```
+
+Define `GIT_ACCESS_USER` and `GIT_ACCESS_TOKEN` with your Github Username and Token
 
 ## Git integration
 
@@ -27,98 +44,38 @@ You can run local git commands alongside multiple repositories that are inside a
 
 ## Github integration
 
+You can run following actions in github:
 
+* Create repositories. 
 
-## Using the script.
+You need to provide a json file with info of the repos you want to create. Check [examples/json-files/new_repos.json](this json file) with the example of the file. Place the file in your $WORKING_DIR
 
-* Make a simbolic lynk of the script to your local `$PATH`
-```shell
-    sudo ln -s $(pwd)/git-helper /usr/local/bin
-```
-* Define the envar WORKING_DIR. This must be the folder where you have all the repositories you want to manage.
-```shell
-    cd <your_working_dir>
-    export WORKING_DIR=$(pwd)
+```sh
+cp examples/json-files/new_repos.json $WORKING_DIR
 ```
 
-## Options
+After creating the repositories a file `repos_info.json` will be created. don't erase it
 
-* `--action` -- Specify git command to run
+* Create/update/merge pull requests
 
-* Used in clone action:
+You need to provide a json file with info of the PRs you want to create. Check [examples/json-files/new_prs.json](this json file) with the example of the file. Place the file in your $WORKING_DIR
 
-  * `--private-token` -- Is Your [Gitlab/GitHub private token]
-  * `--git-provider` -- `gitlab` or `github`
-  * `--git-domain` -- The domain of the gitlab server (Gitlab)
-  * `--group-id` -- The ID of the Group of repositories you want to clone (Gitlab)
-  * `--org-name` -- The name of the GitHub organization
-
-* `--message` -- Message for a commit 
-* `--branch` -- The branch where you want to work 
-
---branch option is not mandatory, if not specified the action will be taken in the current branch of each repository
-
-* `--base-branch` -- The base branch when you want to make a rebase
-* `--extra-options` -- Any extra options for git command
-
-### Examples for using differents actions:
-
-* Git Clone repositories of group - **Gitlab**:
-```shell
-  git-helper --action=clone --git-provider=gitlab --private-token="YOUR_GITLAB_TOKEN" --git-domain="YOUR_GITLAB_DOMAIN" --group-id="YOUR_GROUP_ID"  
+```sh
+cp examples/json-files/new_prs.json $WORKING_DIR
 ```
 
-* Git Clone repositories of organization - **Github**:
-```shell
-  git-helper --action=clone --git-provider=github --private-token="YOUR_GITHUB_TOKEN"  --org-name="YOUR_ORG_NAME"
-```
+After creating the repositories a file `pr_info.json` will be created. don't erase it
 
-* Create a commit:
-```shell
-  git-helper --action=commit --message="<your_message>" 
-```
+If you want to update you can only update these fields: `title, body, state, base, maintainer_can_modify`.
 
-* Create and checkout to new branch (locally):
-```shell
-  git-helper --action=create-branch --branch=<your_branch>
-```
+## Gitlab integration
 
-* Delete a branch (locally):
-```shell
-  git-helper --action=delete --branch=<your_branch>
-```
+COMING SOON
 
-* Checkout to existing branch (without pull):
-```shell
-    git-helper --action=checkout --branch=<your_branch>
-```
+## Usage
 
-* Pull a branch:
-```shell
-  git-helper --action=pull --branch=<your_branch>
-```
+Use the `--help`
 
-* Reset all content to HEAD (equivalent to git reset --hard HEAD):
-```shell
-  git-helper --action=reset   
-```
-
-* Add all changes (equivalent to git add -A):
-```shell
-  git-helper --action=add
-```
-
-* Rebase a branch with an origin branch:
-```shell
-  git-helper --action=rebase --base-branch=<origin_branch> --branch=<your_branch>  
-```
-
-* Push all changes to upstream:
-```shell
-  git-helper --action=push 
-```
-
-* Fetch all branches from upstream:
-```shell
-  git-helper --action=fetch
+```sh
+git-helper --help
 ```

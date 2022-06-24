@@ -25,8 +25,9 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "githelper",
-	Short: "A cli tool to help you manage git in multiple repositories",
+	Use:     "githelper",
+	Version: "v1.0.0-rc2",
+	Short:   "A cli tool to help you manage git in multiple repositories",
 	Long: `git-helper is a cli tool to help you manage git in multiple repositories
 
 It will provide the option to interact with Github or Gitlab API's to clone repos, open/close/merge
