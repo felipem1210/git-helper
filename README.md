@@ -13,7 +13,8 @@ Change the version for the [version](https://github.com/felipem1210/git-helper/t
 ### Linux amd64
 
 ```sh
-curl -L https://github.com/felipem1210/git-helper/releases/download/v1.0.0-rc1/git-helper_1.0.0_linux_amd64.tar.gz |tar xzv -C /tmp
+export GITHELPER_VERSION=0.1.0
+curl -L "https://github.com/felipem1210/git-helper/releases/download/v${GITHELPER_VERSION}/git-helper_${GITHELPER_VERSION}_linux_amd64.tar.gz" |tar xzv -C /tmp
 sudo mv /tmp/git-helper /usr/local/bin/git-helper
 ```
 
