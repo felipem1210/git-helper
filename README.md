@@ -59,7 +59,7 @@ After creating the repositories a file `repos_info.json` will be created. don't 
 
 * Create/update/merge pull requests
 
-You need to provide a json file with info of the PRs you want to create. Check [this json file](examples/json-files/new_prs.json) with the example of the file. Place the file in your $WORKING_DIR
+You need to provide a json file with info of the PRs you want to create. Check [this json file](examples/json-files/new_pr.json) with the example of the file. Place the file in your $WORKING_DIR
 
 ```sh
 cp examples/json-files/new_prs.json $WORKING_DIR
