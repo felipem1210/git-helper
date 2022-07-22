@@ -17,9 +17,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"errors"
-	"os"
-
 	"github.com/fatih/color"
 	"github.com/felipem1210/git-helper/githelper"
 	"github.com/spf13/cobra"
@@ -38,17 +35,15 @@ var cloneCmd = &cobra.Command{
 		org, _ := cmd.Flags().GetString("org")
 		if provider == "github" && json_file != "" {
 			myRepos := githelper.MyRepos{}
+			myRepos = myRepos.GetGithubRepositoriesInfo(org)
+			err := githelper.WriteReposToJson(myRepos, json_file)
+			if err != nil {
+				githelper.CheckIfError(err)
+			} else {
+				color.Green("The json file %s with repo info was written sucessfully", json_file)
+			}
 			repoNames = myRepos.GithubGetRepoNames(json_file)
 			repoUrls = myRepos.GithubGetCloneUrls(json_file)
-			if _, err := os.Stat(json_file); errors.Is(err, os.ErrNotExist) {
-				myRepos = myRepos.GetGithubRepositoriesInfo(org)
-				err := githelper.WriteReposToJson(myRepos, json_file)
-				if err != nil {
-					githelper.CheckIfError(err)
-				} else {
-					color.Green("The json file %s with repo info was written sucessfully", json_file)
-				}
-			}
 		}
 		githelper.GitClone(repoNames, repoUrls)
 	},
