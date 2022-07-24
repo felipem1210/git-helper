@@ -33,25 +33,28 @@ var cloneCmd = &cobra.Command{
 		provider, _ := cmd.Flags().GetString("provider")
 		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
 		org, _ := cmd.Flags().GetString("org")
+		regex, _ := cmd.Flags().GetString("regexp")
+		target, _ := cmd.Flags().GetString("target")
+		auth, _ := cmd.Flags().GetString("auth")
 		if provider == "github" && json_file != "" {
 			myRepos := githelper.MyRepos{}
 			myRepos = myRepos.GetGithubRepositoriesInfo(org)
 			err := githelper.WriteReposToJson(myRepos, json_file)
-			if err != nil {
-				githelper.CheckIfError(err)
-			} else {
-				color.Green("The json file %s with repo info was written sucessfully", json_file)
-			}
-			repoNames = myRepos.GithubGetRepoNames(json_file)
-			repoUrls = myRepos.GithubGetCloneUrls(json_file)
+			githelper.CheckIfError(err)
+			color.Green("The json file %s with repo info was written sucessfully", json_file)
+			repoNames = myRepos.GithubGetRepoNames(json_file, regex)
+			repoUrls = myRepos.GithubGetGitUrls(json_file, regex, auth)
 		}
-		githelper.GitClone(repoNames, repoUrls)
+		githelper.GitClone(target, auth, repoNames, repoUrls)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(cloneCmd)
-	cloneCmd.PersistentFlags().StringP("provider", "p", "", "A provider to choose, options: gitub, gitlab")
-	cloneCmd.MarkPersistentFlagRequired("provider")
+	cloneCmd.PersistentFlags().StringP("provider", "p", "github", "A provider to choose, options: gitub, gitlab")
+	//cloneCmd.MarkPersistentFlagRequired("provider")
 	cloneCmd.PersistentFlags().StringP("org", "o", "", "The github Organization to work with")
+	cloneCmd.PersistentFlags().StringP("regexp", "r", "", "Regexp to apply to repositories clone process, to clone based on it")
+	cloneCmd.PersistentFlags().StringP("auth", "a", "ssh", "Select if you want to clone using HTTPS or SSH.")
+	cloneCmd.PersistentFlags().String("repo-info-json-file", "repos_info.json", "The name of the json file with info of the repos of the Github Org. It is read for each git local actions.")
 }

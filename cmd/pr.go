@@ -35,20 +35,18 @@ var prCmd = &cobra.Command{
 		create, _ := cmd.Flags().GetBool("create")
 		update, _ := cmd.Flags().GetBool("update")
 		merge, _ := cmd.Flags().GetBool("merge")
+		target, _ := cmd.Flags().GetString("target")
 
 		repos := githelper.MyRepos{}
-		repoNames := repos.GithubGetRepoNames(repos_json_file)
+		repoNames := githelper.ListDirectories(target)
 		org := repos.GithubGetOrg(repos_json_file)
 
 		myPrs := githelper.MyPrs{}
 		if create {
 			myPrs = myPrs.GithubCreatePr(org, repoNames, new_pr_json_file, reviewers)
 			err := githelper.WritePrsToJson(myPrs, pr_info_json_file)
-			if err != nil {
-				githelper.CheckIfError(err)
-			} else {
-				color.Green("The json file %s with pr info was written sucessfully", pr_info_json_file)
-			}
+			githelper.CheckIfError(err)
+			color.Green("The json file %s with pr info was written sucessfully", pr_info_json_file)
 		} else if update {
 			myPrs.GithubEditPr(org, repoNames, pr_info_json_file)
 		} else if merge {

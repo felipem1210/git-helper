@@ -57,5 +57,5 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	cobra.OnInitialize(githelper.ValidateEnv)
-	rootCmd.PersistentFlags().String("repo-info-json-file", "repos_info.json", "The name of the json file with info of the repos of the Github Org or Gitlab Group. It is read for each git local actions.")
+	rootCmd.PersistentFlags().StringP("target", "t", "", "Target directory inside your working directory where git actions will be executed. If not set actions will be done on WORKING_DIR")
 }

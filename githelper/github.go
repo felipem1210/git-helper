@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 
 	"github.com/fatih/color"
 	"github.com/google/go-github/v41/github"
@@ -89,20 +90,41 @@ func (myRepos MyRepos) GithubGetOrg(f string) string {
 	return org
 }
 
-func (myRepos MyRepos) GithubGetRepoNames(f string) []string {
+func (myRepos MyRepos) GithubGetRepoNames(f string, regex string) []string {
 	myRepos = myRepos.fromJsontoSliceOfStructs(f)
 	var repoNames []string
 	for _, repo := range myRepos {
-		repoNames = append(repoNames, repo.GetName())
+		if regex == "" {
+			repoNames = append(repoNames, repo.GetName())
+		} else {
+			matched, _ := regexp.MatchString(regex, repo.GetName())
+			if matched {
+				repoNames = append(repoNames, repo.GetName())
+			}
+		}
 	}
 	return repoNames
 }
 
-func (myRepos MyRepos) GithubGetCloneUrls(f string) []string {
+func (myRepos MyRepos) GithubGetGitUrls(f string, regex string, auth string) []string {
 	myRepos = myRepos.fromJsontoSliceOfStructs(f)
 	var repoUrls []string
+	var url string
 	for _, repo := range myRepos {
-		repoUrls = append(repoUrls, repo.GetCloneURL())
+		if auth == "ssh" {
+			url = repo.GetSSHURL()
+		} else if auth == "https" {
+			url = repo.GetCloneURL()
+		}
+		if regex == "" {
+			repoUrls = append(repoUrls, url)
+		} else {
+			matched, _ := regexp.MatchString(regex, url)
+			if matched {
+				repoUrls = append(repoUrls, url)
+			}
+
+		}
 	}
 	return repoUrls
 }

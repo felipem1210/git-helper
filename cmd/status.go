@@ -27,10 +27,9 @@ var statusCmd = &cobra.Command{
 	Short: "Print the working tree status of each repository",
 	Long:  `Print the working tree status of each repository. Equivalent to do git status`,
 	Run: func(cmd *cobra.Command, args []string) {
-		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		myRepos := githelper.MyRepos{}
-		repoNames := myRepos.GithubGetRepoNames(json_file)
-		githelper.GitStatus(repoNames)
+		target, _ := cmd.Flags().GetString("target")
+		repoNames := githelper.ListDirectories(target)
+		githelper.GitStatus(target, repoNames)
 	},
 }
 

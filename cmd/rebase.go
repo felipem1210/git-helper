@@ -32,10 +32,9 @@ If you have conflicts you can pass the argument with "continue" or "abort" optio
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("rebase called")
 		base_branch, _ := cmd.Flags().GetString("base-branch")
-		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		myRepos := githelper.MyRepos{}
-		repoNames := myRepos.GithubGetRepoNames(json_file)
-		githelper.GitRebase(repoNames, base_branch)
+		target, _ := cmd.Flags().GetString("target")
+		repoNames := githelper.ListDirectories(target)
+		githelper.GitRebase(target, repoNames, base_branch)
 	},
 }
 

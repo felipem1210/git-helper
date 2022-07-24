@@ -28,10 +28,9 @@ var checkoutCmd = &cobra.Command{
 	Long:  `Checkout to a specific branch, you need to pass branch name`,
 	Run: func(cmd *cobra.Command, args []string) {
 		branch, _ := cmd.Flags().GetString("branch")
-		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		myRepos := githelper.MyRepos{}
-		repoNames := myRepos.GithubGetRepoNames(json_file)
-		githelper.GitCheckout(repoNames, branch)
+		target, _ := cmd.Flags().GetString("target")
+		repoNames := githelper.ListDirectories(target)
+		githelper.GitCheckout(target, repoNames, branch)
 	},
 }
 

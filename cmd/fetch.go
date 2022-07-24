@@ -27,10 +27,9 @@ var fetchCmd = &cobra.Command{
 	Short: "Do a git fetch of all branches on each repo",
 	Long:  `Do a git fetch of all branches on each repo. Equivalent to do: git fetch --all.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		myRepos := githelper.MyRepos{}
-		repoNames := myRepos.GithubGetRepoNames(json_file)
-		githelper.GitFetch(repoNames)
+		target, _ := cmd.Flags().GetString("target")
+		repoNames := githelper.ListDirectories(target)
+		githelper.GitFetch(target, repoNames)
 	},
 }
 

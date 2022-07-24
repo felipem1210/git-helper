@@ -27,10 +27,9 @@ var addCmd = &cobra.Command{
 	Short: "Add all content in each repository",
 	Long:  `Add all content to each repository, equivalent to make git add -A.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		myRepos := githelper.MyRepos{}
-		repoNames := myRepos.GithubGetRepoNames(json_file)
-		githelper.GitAdd(repoNames)
+		target, _ := cmd.Flags().GetString("target")
+		repoNames := githelper.ListDirectories(target)
+		githelper.GitAdd(target, repoNames)
 	},
 }
 

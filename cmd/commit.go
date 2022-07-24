@@ -28,10 +28,9 @@ var commitCmd = &cobra.Command{
 	Long:  `Create a commit to each repository.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		message, _ := cmd.Flags().GetString("message")
-		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		myRepos := githelper.MyRepos{}
-		repoNames := myRepos.GithubGetRepoNames(json_file)
-		githelper.GitCommit(repoNames, message)
+		target, _ := cmd.Flags().GetString("target")
+		repoNames := githelper.ListDirectories(target)
+		githelper.GitCommit(target, repoNames, message)
 	},
 }
 
