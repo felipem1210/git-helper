@@ -27,10 +27,9 @@ var pushCmd = &cobra.Command{
 	Short: "Push changes of a branch to remote",
 	Long:  `Push changes of a branch from remote. It will make the Push of current branch.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		myRepos := githelper.MyRepos{}
-		repoNames := myRepos.GithubGetRepoNames(json_file)
-		githelper.GitPush(repoNames)
+		target, _ := cmd.Flags().GetString("target")
+		repoNames := githelper.ListDirectories(target)
+		githelper.GitPush(target, repoNames)
 	},
 }
 

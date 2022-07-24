@@ -42,4 +42,5 @@ func init() {
 	repoCmd.PersistentFlags().StringP("provider", "p", "", "A provider to choose, options: gitub, gitlab")
 	repoCmd.MarkPersistentFlagRequired("provider")
 	repoCmd.PersistentFlags().BoolP("create", "c", false, "Create the repositories from repo-info-json-file")
+	repoCmd.PersistentFlags().String("repo-info-json-file", "repos_info.json", "The name of the json file with info of the repos of the Github Org. It is read for each git local actions.")
 }

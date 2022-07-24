@@ -27,10 +27,9 @@ var pullCmd = &cobra.Command{
 	Short: "Pull changes of a branch from remote",
 	Long:  `Pull changes of a branch from remote. It will make the pull of current branch`,
 	Run: func(cmd *cobra.Command, args []string) {
-		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		myRepos := githelper.MyRepos{}
-		repoNames := myRepos.GithubGetRepoNames(json_file)
-		githelper.GitPull(repoNames)
+		target, _ := cmd.Flags().GetString("target")
+		repoNames := githelper.ListDirectories(target)
+		githelper.GitPull(target, repoNames)
 	},
 }
 

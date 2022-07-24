@@ -28,10 +28,9 @@ var createBranchCmd = &cobra.Command{
 	Long:  `Create a branch locally and checkout into that branch for each repository.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		branch, _ := cmd.Flags().GetString("branch")
-		json_file, _ := cmd.Flags().GetString("repo-info-json-file")
-		myRepos := githelper.MyRepos{}
-		repoNames := myRepos.GithubGetRepoNames(json_file)
-		githelper.GitCreateBranch(repoNames, branch)
+		target, _ := cmd.Flags().GetString("target")
+		repoNames := githelper.ListDirectories(target)
+		githelper.GitCreateBranch(target, repoNames, branch)
 	},
 }
 

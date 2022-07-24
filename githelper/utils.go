@@ -18,6 +18,7 @@ package githelper
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -25,19 +26,22 @@ import (
 )
 
 func WritePrsToJson(data MyPrs, json_file string) error {
+	fullPathJsonFile := getEnvValue("WORKING_DIR") + "/" + json_file
 	file, _ := json.MarshalIndent(data, "", "  ")
-	err := ioutil.WriteFile(getEnvValue("WORKDING_DIR")+json_file, file, 0644)
+	err := ioutil.WriteFile(fullPathJsonFile, file, 0644)
 	return err
 }
 
 func WriteReposToJson(data MyRepos, json_file string) error {
+	fullPathJsonFile := getEnvValue("WORKING_DIR") + "/" + json_file
 	file, _ := json.MarshalIndent(data, "", "  ")
-	err := ioutil.WriteFile(getEnvValue("WORKDING_DIR")+json_file, file, 0644)
+	err := ioutil.WriteFile(fullPathJsonFile, file, 0644)
 	return err
 }
 
 func (data *prCreateInfo) fromJsontoStruct(f string) *prCreateInfo {
-	jsonFile, err := ioutil.ReadFile(f)
+	fullPathJsonFile := getEnvValue("WORKING_DIR") + "/" + f
+	jsonFile, err := ioutil.ReadFile(fullPathJsonFile)
 	CheckIfError(err)
 	err = json.Unmarshal([]byte(jsonFile), &data)
 	CheckIfError(err)
@@ -45,7 +49,8 @@ func (data *prCreateInfo) fromJsontoStruct(f string) *prCreateInfo {
 }
 
 func (data MyPrs) fromJsontoSliceOfStructs(f string) MyPrs {
-	jsonFile, err := ioutil.ReadFile(f)
+	fullPathJsonFile := getEnvValue("WORKING_DIR") + "/" + f
+	jsonFile, err := ioutil.ReadFile(fullPathJsonFile)
 	CheckIfError(err)
 	err = json.Unmarshal([]byte(jsonFile), &data)
 	CheckIfError(err)
@@ -53,7 +58,8 @@ func (data MyPrs) fromJsontoSliceOfStructs(f string) MyPrs {
 }
 
 func (data MyRepos) fromJsontoSliceOfStructs(f string) MyRepos {
-	jsonFile, err := ioutil.ReadFile(f)
+	fullPathJsonFile := getEnvValue("WORKING_DIR") + "/" + f
+	jsonFile, err := ioutil.ReadFile(fullPathJsonFile)
 	CheckIfError(err)
 	err = json.Unmarshal([]byte(jsonFile), &data)
 	CheckIfError(err)
@@ -92,4 +98,27 @@ func LogFatal(f string, err error) {
 
 func getEnvValue(e string) string {
 	return os.Getenv(e)
+}
+
+func createFolder(target string) {
+	dir := getEnvValue("WORKING_DIR") + "/" + target
+	if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
+		err := os.Mkdir(dir, os.ModePerm)
+		CheckIfError(err)
+	}
+}
+
+func ListDirectories(target string) []string {
+	var directories []string
+	dir := getEnvValue("WORKING_DIR") + "/" + target
+	dirs, err := ioutil.ReadDir(dir)
+	CheckIfError(err)
+	for _, d := range dirs {
+		if d.IsDir() {
+			if _, err := os.Stat(dir + "/" + d.Name() + "/.git"); !os.IsNotExist(err) {
+				directories = append(directories, d.Name())
+			}
+		}
+	}
+	return directories
 }
