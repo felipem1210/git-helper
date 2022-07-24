@@ -13,8 +13,16 @@ Change the version for the [version](https://github.com/felipem1210/git-helper/t
 ### Linux amd64
 
 ```sh
-export GITHELPER_VERSION=0.1.1
+export GITHELPER_VERSION=0.2.0
 curl -L "https://github.com/felipem1210/git-helper/releases/download/v${GITHELPER_VERSION}/git-helper_${GITHELPER_VERSION}_linux_amd64.tar.gz" |tar xzv -C /tmp
+sudo mv /tmp/git-helper /usr/local/bin/git-helper
+```
+
+### MacOS amd64
+
+```sh
+export GITHELPER_VERSION=0.2.0
+curl -L "https://github.com/felipem1210/git-helper/releases/download/v${GITHELPER_VERSION}/git-helper_${GITHELPER_VERSION}_darwin_amd64.tar.gz" |tar xzv -C /tmp
 sudo mv /tmp/git-helper /usr/local/bin/git-helper
 ```
 
