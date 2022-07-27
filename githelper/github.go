@@ -23,7 +23,7 @@ import (
 	"regexp"
 
 	"github.com/fatih/color"
-	"github.com/google/go-github/v41/github"
+	"github.com/google/go-github/v45/github"
 	"golang.org/x/oauth2"
 )
 
@@ -73,7 +73,16 @@ func (myRepos MyRepos) GetGithubRepositoriesInfo(org string) MyRepos {
 	var myReposComplete MyRepos
 	client, ctx := githubInitClient()
 	// list all repositories for the authenticated user
-	repos, _, err := client.Repositories.ListByOrg(ctx, org, nil)
+	listOptions := &github.ListOptions{
+		Page:    0,
+		PerPage: 1000,
+	}
+	repos, _, err := client.Repositories.ListByOrg(ctx, org, &github.RepositoryListByOrgOptions{
+		Type:        "all",
+		Sort:        "full_name",
+		Direction:   "asc",
+		ListOptions: *listOptions,
+	})
 	if err != nil {
 		CheckIfError(err)
 	}
