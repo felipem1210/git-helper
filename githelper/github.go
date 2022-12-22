@@ -47,6 +47,7 @@ func (myRepos MyRepos) GithubCreateRepos(f string) MyRepos {
 	client, ctx := githubInitClient()
 	for _, repo := range myRepos {
 		repo_options := &github.Repository{
+			AllowForking:        repo.AllowForking,
 			Name:                repo.Name,
 			DefaultBranch:       repo.DefaultBranch,
 			MasterBranch:        repo.MasterBranch,
@@ -55,6 +56,7 @@ func (myRepos MyRepos) GithubCreateRepos(f string) MyRepos {
 			AllowSquashMerge:    repo.AllowSquashMerge,
 			AllowMergeCommit:    repo.AllowMergeCommit,
 			AllowAutoMerge:      repo.AllowAutoMerge,
+			AllowUpdateBranch:   repo.AllowUpdateBranch,
 			DeleteBranchOnMerge: repo.DeleteBranchOnMerge,
 			Private:             repo.Private,
 			AutoInit:            repo.AutoInit,
@@ -67,6 +69,22 @@ func (myRepos MyRepos) GithubCreateRepos(f string) MyRepos {
 		myReposComplete = append(myReposComplete, repo_info)
 	}
 	return myReposComplete
+}
+
+// Assigns a github team to a repository
+func (myRepos MyRepos) GithubAssignTeamToRepo(f string, team string) {
+	myRepos = myRepos.fromJsontoSliceOfStructs(f)
+	client, ctx := githubInitClient()
+	for _, repo := range myRepos {
+		org := *repo.GetOrganization().Name
+		color.Green("Assigning team %s to repo %s\n", team, repo.GetName())
+		_, err := client.Teams.AddTeamRepoBySlug(ctx, org, team, org, repo.GetName(), &github.TeamAddTeamRepoOptions{
+			Permission: "admin",
+		})
+		if err != nil {
+			CheckIfError(err)
+		}
+	}
 }
 
 func (myRepos MyRepos) GetGithubRepositoriesInfo(org string) MyRepos {

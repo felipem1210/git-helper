@@ -10,6 +10,8 @@
     "allow_squash_merge": false,
     "allow_merge_commit": true,
     "allow_auto_merge": false,
+    "allow_forking": false,
+    "allow_update_branch": true,
     "delete_branch_on_merge": true,
     "private": true,
     "auto_init": true
@@ -25,6 +27,8 @@
     "allow_squash_merge": false,
     "allow_merge_commit": true,
     "allow_auto_merge": false,
+    "allow_forking": false,
+    "allow_update_branch": true,
     "delete_branch_on_merge": true,
     "private": true,
     "auto_init": true
